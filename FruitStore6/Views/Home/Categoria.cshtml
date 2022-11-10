@@ -1,0 +1,32 @@
+﻿@model FruitStore6.Models.ViewModels.CategoriaViewModel
+@{
+    Layout = "_Layout";
+}
+
+<h1 id="nombreCategoria">@Model.NombreCategoria</h1>
+
+
+<div class="productos">
+    @if (Model.Producto != null)
+    {
+        @foreach (var item in Model.Producto)
+        {
+            <a href="~/p/@(item.Nombre?.Replace(" ","-"))">
+                <div>
+                    <img src="~/img_frutas/@(item.Id).jpg" />
+                </div>
+                <h2>@(item.Nombre)</h2>
+                @if (item.Precio.HasValue)
+                {
+                    <h3>@(item.Precio.Value.ToString("c"))</h3>
+                }
+            </a>
+        }
+    }
+   
+   
+   
+</div>
+
+
+
