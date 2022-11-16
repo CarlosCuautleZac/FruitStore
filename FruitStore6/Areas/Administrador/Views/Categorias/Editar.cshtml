@@ -1,21 +1,29 @@
-﻿
+﻿@model FruitStore6.Models.Categoria
+@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+
 @{
     Layout = "_LayoutAdmin";
 }
 
-<form>
+<form method="post" asp-area="Administrador" asp-controller="Categorias" asp-action="Editar"> 
     <div>
         <h1>Editar Categoría</h1>
 
-        <input type="hidden" id="id" />
+        <input type="hidden" id="id" asp-for="Id"/>
 
         <label>Nombre:</label>
-        <input type="text" id="txtNombre" required="required" />
+        <input type="text" id="txtNombre" asp-for="Nombre" required="required" />
+
+        @Html.ValidationSummary()
+
 
         <div class="botones">
             <p id="error"></p>
-            <input type="submit" value="Guardar" id="btnGuardar" />
-            <input type="button" value="Cancelar" id="btnCancelar" formnovalidate="formnovalidate" />
+            <input type="submit" value="Guardar" id="btnGuardar"/>
+            <a href="~/Administrador/Categorias">
+                <input type="button" value="Cancelar" id="btnCancelar" formnovalidate="formnovalidate" />
+            </a>
+            
         </div>
     </div>
 </form>

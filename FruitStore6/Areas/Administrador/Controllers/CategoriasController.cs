@@ -18,7 +18,6 @@ namespace FruitStore6.Areas.Administrador.Controllers
         }
 
 
-        
         public IActionResult Index()
         {
             var categirias = _context.Categorias.Where(x => x.Eliminado == false).OrderBy(x => x.Nombre);
@@ -26,7 +25,7 @@ namespace FruitStore6.Areas.Administrador.Controllers
             return View(categirias);
         }
 
-        
+
         public IActionResult Agregar()
         {
             return View();
@@ -55,14 +54,92 @@ namespace FruitStore6.Areas.Administrador.Controllers
                 return View(c);
         }
 
-        public IActionResult Editar()
+        public IActionResult Editar(int id)
         {
-            return View();
+            var categoria = _context.Categorias.Find(id);
+            if (categoria == null)
+                return RedirectToAction("Index");
+
+            return View(categoria);
         }
 
-        public IActionResult Eliminar()
+        [HttpPost]
+        public IActionResult Editar(Categoria c)
         {
-            return View();
+            //Validar 
+            if (string.IsNullOrWhiteSpace(c.Nombre))
+            {
+                ModelState.AddModelError("", "Debe escribir el nombre de la categoria");
+            }
+            //Validar que no se repita otro y que no sea yo
+            if (_context.Categorias.Any(x => x.Nombre == c.Nombre && x.Id != c.Id))
+            {
+                ModelState.AddModelError("", "Ya existe una categoria con ese nombre");
+            }
+
+            if (ModelState.IsValid)
+            {
+                var categoria = _context.Categorias.Find(c.Id);
+
+                if (categoria == null)
+                    return RedirectToAction("Index");
+
+                categoria.Nombre = c.Nombre;
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+                return View(c);
+
+
+
+
+            //else
+            //    return View(c);
+
+
+
+        }
+
+        public IActionResult Eliminar(int id)
+        {
+            var categoria = _context.Categorias.Find(id);
+
+            if (categoria == null)
+                return RedirectToAction("Index");
+
+            return View(categoria);
+
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar(Categoria c)
+        {
+            var categoria = _context.Categorias.Find(c.Id);
+            if (categoria == null)
+            {
+                ModelState.AddModelError("", "La categoria no existe o ya ha sido eliminada");
+            }
+
+            else
+            {
+
+                if (_context.Productos.Any(x => x.IdCategoria == c.Id))
+                {
+                    ModelState.AddModelError("", "No se puede eliminar una categoria que tenga productos");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    _context.Remove(categoria);
+                    _context.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+
+            return View(categoria);
+
+
         }
     }
 }
