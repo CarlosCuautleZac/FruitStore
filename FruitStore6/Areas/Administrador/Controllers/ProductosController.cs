@@ -37,11 +37,19 @@ namespace FruitStore6.Areas.Administrador.Controllers
             return View(vm);
         }
 
+
         public IActionResult Agregar()
+        {
+            ProductosViewModel vm = new();
+            vm.Categorias = context.Categorias.OrderBy(x => x.Nombre);
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult Agregar(ProductosViewModel p)
         {
             return View();
         }
-
         public IActionResult Editar()
         {
             return View();
