@@ -13,10 +13,13 @@ namespace FruitStore6.Areas.Administrador.Controllers
     public class ProductosController : Controller
     {
         private readonly fruteriashopContext context;
+        private readonly IWebHostEnvironment env;
 
-        public ProductosController(fruteriashopContext context)
+        public ProductosController(fruteriashopContext context, IWebHostEnvironment env)
         {
+           
             this.context = context;
+            this.env = env;
         }
 
         public IActionResult Index(IndexProductosViewModel vm)
@@ -25,11 +28,11 @@ namespace FruitStore6.Areas.Administrador.Controllers
 
             if (vm.IdCategoria == 0)//No eligieron categoria, selecciono todo
             {
-                vm.Productos = context.Productos.Include(x=>x.IdCategoriaNavigation).OrderBy(x => x.Nombre);
+                vm.Productos = context.Productos.Include(x => x.IdCategoriaNavigation).OrderBy(x => x.Nombre);
             }
             else
             {
-                vm.Productos = context.Productos.Where(x => x.IdCategoria == vm.IdCategoria).Include(x=>x.IdCategoriaNavigation).OrderBy(x=>x.Nombre);
+                vm.Productos = context.Productos.Where(x => x.IdCategoria == vm.IdCategoria).Include(x => x.IdCategoriaNavigation).OrderBy(x => x.Nombre);
             }
 
             vm.Categorias = context.Categorias.OrderBy(x => x.Nombre);
@@ -46,10 +49,45 @@ namespace FruitStore6.Areas.Administrador.Controllers
         }
 
         [HttpPost]
-        public IActionResult Agregar(ProductosViewModel p)
+        public IActionResult Agregar(ProductosViewModel vm)
         {
+            //Validar
+            if (vm.Producto != null)
+            {
+                if (string.IsNullOrWhiteSpace(vm.Producto.Nombre))
+                {
+                    ModelState.AddModelError("", "Escriba el nombre del producto");
+                }
+
+                //Si todo sale bien va a la base de datos
+                if (ModelState.IsValid)
+                {
+                    context.Add(vm.Producto);
+                    context.SaveChanges();
+
+                    if (vm.Imagen == null)//El usuario no elegio imagen
+                    {
+                        string nodisp = env.WebRootPath+"/img_frutas/no-disponible.png";
+                        string nuevaruta = env.WebRootPath + $"/img_frutas/{vm.Producto.Id}.jpg";
+
+                        System.IO.File.Copy(nodisp, nuevaruta);
+                    }
+                    else
+                    {
+                        string nuevaruta = env.WebRootPath + $"/img_frutas/{vm.Producto.Id}.jpg";
+                        var archivo = System.IO.File.Create(nuevaruta);
+                        vm.Imagen.CopyTo(archivo);
+                        archivo.Close();
+                    }
+                    return RedirectToAction("Index");
+                }
+            }
+
+           
             return View();
         }
+
+
         public IActionResult Editar()
         {
             return View();
