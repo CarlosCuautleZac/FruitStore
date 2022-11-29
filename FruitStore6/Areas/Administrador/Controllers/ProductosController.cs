@@ -83,13 +83,53 @@ namespace FruitStore6.Areas.Administrador.Controllers
                 }
             }
 
-           
-            return View();
+            vm.Categorias = context.Categorias.OrderBy(x => x.Nombre);
+            return View(vm);
         }
 
 
-        public IActionResult Editar()
+        public IActionResult Editar(int id)
         {
+            var p = context.Productos.Find(id);
+
+            if (p == null)
+                RedirectToAction("Index");
+
+            ProductosViewModel vm = new ProductosViewModel();
+            vm.Producto = p;
+            vm.Categorias = context.Categorias.OrderBy(x => x.Nombre);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult Editar(ProductosViewModel vm)
+        {
+            if (vm.Producto != null)
+            {
+                var producto = context.Productos.Find(vm.Producto.Id);
+                if (producto == null)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                //Validar
+                if(string.IsNullOrWhiteSpace(vm.Producto.Nombre))
+                {
+                    ModelState.AddModelError("", "Escriba el nombre del producto");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    producto.Nombre = vm.Producto.Nombre;
+                    producto.Descripcion=vm.Producto.Descripcion;
+                    producto.UnidadMedida = vm.Producto.UnidadMedida;
+                    producto.Precio=vm.Producto.Precio;
+                    producto.IdCategoria=vm.Producto.IdCategoria;
+                    context.SaveChanges();
+                }
+            }
+
             return View();
         }
 
