@@ -6,7 +6,7 @@
     Layout = "_LayoutAdmin";
 }
 
-<form asp-action="" method="post">
+<form action="~/Administrador/Productos/Editar" enctype="multipart/form-data" method="post">
     <div>
         <h1>Editar Producto</h1>
 
@@ -36,10 +36,14 @@
 
         <img id="imagePreview" src="~/img_frutas/@(Model.Producto.Id).jpg" alt="Vista previa de la imagen" />
 
+        @Html.ValidationSummary();
+
         <div class="botones">
             <p id="error"></p>
             <input type="submit" value="Guardar" id="btnGuardar" />
-            <input type="button" value="Cancelar" id="btnCancelar" formnovalidate="formnovalidate" />
+            <a href="~/Administrador/Productos">
+                <input type="button" value="Cancelar" id="btnCancelar" formnovalidate="formnovalidate" />
+            </a>
         </div>
     </div>
 </form>

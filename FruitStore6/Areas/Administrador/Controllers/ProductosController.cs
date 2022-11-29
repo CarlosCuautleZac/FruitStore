@@ -127,10 +127,21 @@ namespace FruitStore6.Areas.Administrador.Controllers
                     producto.Precio=vm.Producto.Precio;
                     producto.IdCategoria=vm.Producto.IdCategoria;
                     context.SaveChanges();
+                    
                 }
+
+                if (vm.Imagen != null)
+                {
+                    string nuevaruta = env.WebRootPath + $"/img_frutas/{vm.Producto.Id}.jpg";
+                    var archivo = System.IO.File.Create(nuevaruta);
+                    vm.Imagen.CopyTo(archivo);
+                    archivo.Close();              
+                }
+                return RedirectToAction("Index");
             }
 
-            return View();
+            vm.Categorias = context.Categorias.OrderBy(x => x.Nombre);
+            return View(vm);
         }
 
         public IActionResult Eliminar()
