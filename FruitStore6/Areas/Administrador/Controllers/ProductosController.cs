@@ -144,9 +144,44 @@ namespace FruitStore6.Areas.Administrador.Controllers
             return View(vm);
         }
 
-        public IActionResult Eliminar()
+        
+        public IActionResult Eliminar(int id)
         {
-            return View();
+            var p = context.Productos.Find(id);
+
+            if (p == null)
+                return RedirectToAction("Index");
+
+
+            return View(p);
+
+        }
+
+        [HttpPost]
+        public IActionResult Eliminar(Producto p)
+        {
+            var producto = context.Productos.Find(p.Id);
+
+            if (producto == null)
+            {
+                ModelState.AddModelError("", "El producto no existe o ya ha sido eliminado");
+            }
+            else
+            {
+                string nuevaruta = env.WebRootPath + $"/img_frutas/{p.Id}.jpg";
+                context.Remove(producto);
+
+
+
+                if (context.SaveChanges() > 0)
+                {
+                    System.IO.File.Delete(nuevaruta);
+                }
+                
+                return RedirectToAction("Index");
+            }
+
+            return View(p);
         }
     }
 
