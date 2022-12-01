@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<MenuService>();
 builder.Services.AddDbContext<fruteriashopContext>(
     optionsBuilder =>
-                    optionsBuilder.UseMySql("server=localhost;password=root;user=root;database=fruteriashop", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.27-mysql"))
+                    optionsBuilder.UseMySql("server=sistemas19.com;password=fruteria6;user=sistem21_fruteria;database=sistem21_fruteriashop", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.27-mysql"))
 
     );
 
