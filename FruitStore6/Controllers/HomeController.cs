@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FruitStore6.Models;
 using FruitStore6.Models.ViewModels;
@@ -49,7 +50,7 @@ namespace FruitStore.Controllers
                 return RedirectToAction(nameof(Index));
             }
             nombre = nombre.Replace("-", " ");
-            var producto = context.Productos.Include(x=>x.IdCategoriaNavigation).FirstOrDefault(x => x.Nombre == nombre);
+            var producto = context.Productos.Include(x => x.IdCategoriaNavigation).FirstOrDefault(x => x.Nombre == nombre);
             if (producto == null)
             {
                 return RedirectToAction(nameof(Index));
@@ -58,6 +59,35 @@ namespace FruitStore.Controllers
             {
                 return View(producto);
             }
+        }
+
+        public IActionResult IniciarSesion()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult IniciarSesion(Login login)
+        {
+            if (login.Username == "sistemas" && login.Password == "7.2g")
+            {
+                //crear claims
+                //crear identidad
+                //autenticar
+
+                var listaclaims = new List<Claim>()
+                {
+                    new Claim("Id","5"),
+                    new Claim("Carrera", "Sistemas"),
+                    new Claim(ClaimTypes.Name, "Juan Perez"),
+                    new Claim(ClaimTypes.Role,"Administrador")//Impersonalizacion
+                };
+            }
+            else
+            {
+                ModelState.AddModelError("", "Nombre de usuario o contraseña incorrecta");
+            }
+            return View();
         }
     }
 }

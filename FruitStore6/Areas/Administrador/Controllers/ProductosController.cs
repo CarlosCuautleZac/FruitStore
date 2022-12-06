@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FruitStore6.Areas.Administrador.Models;
 using FruitStore6.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FruitStore6.Areas.Administrador.Controllers
 {
+    [Authorize]
     [Area("Administrador")]
     public class ProductosController : Controller
     {
