@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FruitStore6.Models;
 using FruitStore6.Models.ViewModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -66,14 +68,14 @@ namespace FruitStore.Controllers
             return View();
         }
 
+
         [HttpPost]
         public IActionResult IniciarSesion(Login login)
         {
             if (login.Username == "sistemas" && login.Password == "7.2g")
             {
                 //crear claims
-                //crear identidad
-                //autenticar
+                
 
                 var listaclaims = new List<Claim>()
                 {
@@ -82,12 +84,39 @@ namespace FruitStore.Controllers
                     new Claim(ClaimTypes.Name, "Juan Perez"),
                     new Claim(ClaimTypes.Role,"Administrador")//Impersonalizacion
                 };
+
+
+                //crear identidad
+                var identidad = new ClaimsIdentity(listaclaims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+
+                //autenticar
+
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(identidad), new AuthenticationProperties()
+                    {
+                        ExpiresUtc=DateTime.Now.AddDays(2), // Cuanto tiempo estamos con la sesion activa
+                        IsPersistent= true
+                    });
+
+
+                return RedirectToAction("Index", "Home", new { Area="administrador"});
             }
             else
             {
                 ModelState.AddModelError("", "Nombre de usuario o contraseña incorrecta");
+
+                return View(login);
             }
-            return View();
+            ;
+        }
+
+
+
+        public IActionResult CerrarSesion()
+        {
+            HttpContext.SignOutAsync();
+            return RedirectToAction("Index");
         }
     }
 }
