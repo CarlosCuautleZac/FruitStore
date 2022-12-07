@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FruitStore6.Areas.Administrador.Controllers
 {
-    [Authorize]
+    [Authorize(Roles ="Administrador")] //Aqui ponemos quien tiene acceso
     [Area("Administrador")]
     public class HomeController : Controller
     {        

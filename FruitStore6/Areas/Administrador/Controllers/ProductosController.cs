@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FruitStore6.Areas.Administrador.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrador,Supervisor")] //Aqui ponemos quien tiene acceso
     [Area("Administrador")]
     public class ProductosController : Controller
     {
